@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/Collaboroo/ezbackend#readme",
   "dependencies": {
+    "commander": "^8.1.0"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
