@@ -1,11 +1,8 @@
 import {Command} from 'commander'
 import {readPackageUpSync} from 'read-pkg-up'
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import initiate from './initiate.js'
+import initiate from './cli/initiate.js'
+import { __dirname } from './cli/helpers.js'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const pkg = readPackageUpSync({cwd:__dirname})?.packageJson
 

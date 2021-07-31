@@ -25,15 +25,18 @@ export default function initiate(options: any, pkg: any) {
 }
 
 const installEzb = (projectType: ProjectType) => {
+
+  const packageManager = JsPackageManagerFactory.getPackageManager()
+
   const runGenerator: () => Promise<void> = () => {
     switch (projectType) {
       case ProjectType.ALREADY_HAS_EZB:
         logger.log();
-        paddedLog("EzBackend seems to already be available in this project");
+        paddedLog("EzBackend seems to already be available in this project. You can override this with the -f flag");
         logger.log();
         return Promise.resolve();
       case ProjectType.DEFAULT:
-        return defaultGenerator().then(
+        return defaultGenerator(packageManager).then(
           commandLog("Adding EzBackend to your app")
         );
       default:
