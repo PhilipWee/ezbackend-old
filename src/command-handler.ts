@@ -1,4 +1,8 @@
 import {Command} from 'commander'
+import {readPackageUpSync} from 'read-pkg-up'
+
+
+const pkg = readPackageUpSync({cwd:__dirname})?.packageJson
 
 const program = new Command()
 
