@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-import './command-handler'
+import './command-handler.js'

@@ -19,6 +19,7 @@
   "bugs": {
     "url": "https://github.com/Collaboroo/ezbackend/issues"
   },
+  "type": "module",
   "homepage": "https://github.com/Collaboroo/ezbackend#readme",
   "dependencies": {
     "commander": "^8.1.0"
