@@ -23,5 +23,7 @@
   "dependencies": {
     "commander": "^8.1.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/node": "^16.4.8"
+  }
 }
