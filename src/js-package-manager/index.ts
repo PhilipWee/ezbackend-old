@@ -1,2 +1,2 @@
-export * from './PackageJson';
-export * from './PackageJsonHelper';
+export * from './PackageJson.js';
+export * from './PackageJsonHelper.js';

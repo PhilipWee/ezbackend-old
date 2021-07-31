@@ -1,5 +1,5 @@
 import { PackageJson } from "read-pkg-up";
-import { ProjectType } from "./project-types";
+import { ProjectType } from "./project-types.js";
 
 export function isEzbInstalled(dependencies: PackageJson| false, force?:boolean) {
     if (!dependencies) {

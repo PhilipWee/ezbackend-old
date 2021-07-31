@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { ProjectType } from "./project-types.js";
 import { isEzbInstalled } from "./detect.js";
-import { readPackageJson } from "./js-package-manager";
+import { readPackageJson } from "./js-package-manager/index.js";
 
 const logger = console;
 
