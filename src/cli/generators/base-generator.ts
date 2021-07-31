@@ -1,6 +1,6 @@
 import fse from "fs-extra";
 import path from "path";
-import { __dirname } from "../helpers.js";
+import { __dirname } from "../../helpers.js";
 import { JsPackageManager } from "../js-package-manager/JsPackageManager.js";
 
 export async function baseGenerator(packageManager: JsPackageManager) {

@@ -37,6 +37,3 @@ export const commandLog = (message: string) => {
     process.stdout.write(`. ${chalk.green("✓")}\n`);
   };
 };
-
-const __filename = fileURLToPath(import.meta.url);
-export const __dirname = dirname(__filename);

@@ -9,7 +9,11 @@ import defaultGenerator from './generators/DEFAULT/index.js'
 
 const logger = console;
 
-export default function initiate(options: any, pkg: any) {
+type initiateOptions = {
+  force?: boolean
+}
+
+export default function initiate(options: initiateOptions, pkg: any) {
   const welcomeMessage =
     "EzBackend - An extensible backend optimised for the developer experience";
   logger.log(chalk.inverse(`\n ${welcomeMessage} \n`));
