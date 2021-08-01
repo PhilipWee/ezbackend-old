@@ -4,7 +4,7 @@ import initiate from './cli/initiate.js'
 import { __dirname } from './helpers.js'
 import { useEnv } from './helpers.js'
 import {start} from './server/index.js'
-import {test} from './model/index.js'
+// import {test} from './model/index.js'
 
 useEnv("/.ezb/.env")
 
@@ -23,9 +23,9 @@ program
     .description('Start the EzBackend Locally')
     .action((options) => start(options))
 
-program
-    .command('test')
-    .description('Testing function for EzBackend')
-    .action(() => {test()})
+// program
+//     .command('test')
+//     .description('Testing function for EzBackend')
+//     .action(() => {test()})
 
 program.parse(process.argv)
