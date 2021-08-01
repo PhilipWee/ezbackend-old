@@ -27,7 +27,6 @@
     "fastify": "^3.19.2",
     "fastify-swagger": "^4.8.3",
     "sequelize": "^6.6.5",
-    "sequelize-json-schema": "^2.1.1",
     "sqlite3": "^5.0.2"
   },
   "devDependencies": {
