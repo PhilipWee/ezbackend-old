@@ -1,0 +1,19 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "usage",
+        "corejs": 3,
+        "targets": {
+          "node": 10
+        },
+        "shippedProposals": true
+      }
+    ],
+    "@babel/preset-typescript"
+  ],
+  "ignore": [
+    "./src/cli/frameworks"
+  ]
+}

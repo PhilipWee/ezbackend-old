@@ -1,11 +1,13 @@
 {
   "name": "ezbackend",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build:check": "tsc --noEmit",
+    "build:compile": "babel src -d build --extensions \".ts\" --copy-files",
+    "build": "npm run build:check && npm run build:compile"
   },
   "bin": {
     "ezb": "./build/index.js"
@@ -19,23 +21,28 @@
   "bugs": {
     "url": "https://github.com/Collaboroo/ezbackend/issues"
   },
-  "type": "module",
   "homepage": "https://github.com/Collaboroo/ezbackend#readme",
   "dependencies": {
     "commander": "^8.1.0",
     "cross-spawn": "^7.0.3",
+    "dotenv-defaults": "^2.0.2",
     "fastify": "^3.19.2",
     "fastify-swagger": "^4.8.3",
+    "fs-extra": "^10.0.0",
+    "read-pkg-up": "7.0.1",
     "sequelize": "^6.6.5",
     "sqlite3": "^5.0.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.14.8",
+    "@babel/node": "^7.14.9",
+    "@babel/preset-env": "^7.14.9",
+    "@babel/preset-typescript": "^7.14.5",
     "@types/cross-spawn": "^6.0.2",
     "@types/dotenv-defaults": "^2.0.1",
     "@types/fs-extra": "^9.0.12",
-    "@types/node": "^16.4.8",
-    "dotenv-defaults": "^2.0.2",
-    "fs-extra": "^10.0.0",
-    "read-pkg-up": "^8.0.0"
-  }
+    "@types/node": "^16.4.8"
+  },
+  "peerDependencies": {}
 }
