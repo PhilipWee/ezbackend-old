@@ -1,5 +1,6 @@
 import { sync as spawnSync } from "cross-spawn";
 import { commandLog } from "../helpers";
+import path from 'path'
 import { PackageJsonWithDepsAndDevDeps, PackageJson } from "./PackageJson";
 import { readPackageJson, writePackageJson } from "./PackageJsonHelper";
 
@@ -19,6 +20,28 @@ export abstract class JsPackageManager {
    */
   public installDependencies(): void {
     commandLog("Installing dependencies");
+  }
+
+  public addEzbCommandInScripts() {
+
+    //TODO: See if there is a better way than ts-node
+    //TODO: Programmatically get the file path instead
+    const filePath = path.join(process.cwd(),'node_modules/ezbackend/build/index.js')
+    const ezbCmd = `ts-node "${filePath}" start`
+    this.addScripts({
+      ezb: ezbCmd
+    })
+  }
+
+  public addScripts(scripts: Record<string,string>) {
+    const packageJson = this.retrievePackageJson()
+    writePackageJson({
+      ...packageJson,
+      scripts: {
+        ...packageJson.scripts,
+        ...scripts
+      }
+    })
   }
 
   /**

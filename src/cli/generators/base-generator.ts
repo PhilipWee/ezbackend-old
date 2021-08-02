@@ -6,6 +6,7 @@ export async function baseGenerator(packageManager: JsPackageManager) {
   const packageJson = packageManager.retrievePackageJson();
   //TODO: Think about a possible need for versioning dependencies for different project types
   packageManager.addDependencies({ packageJson: packageJson }, ["ezbackend"]);
+  packageManager.addEzbCommandInScripts()
   copyBoilerPlate();
 }
 

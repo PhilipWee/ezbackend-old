@@ -24,6 +24,7 @@ export class EzRouter {
     this.routes = [];
   }
 
+  //TODO: Figure out why on earth the types are no registering on the frontend for this
   public registerRoute(newRoute: RouteOptions) {
     this.routes.push(newRoute);
   }

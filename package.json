@@ -1,14 +1,14 @@
 {
   "name": "ezbackend",
-  "version": "1.0.6",
+  "version": "1.0.11",
   "description": "",
   "main": "build/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:check": "tsc",
     "build:compile": "babel src -d build --extensions \".ts\" --copy-files",
-    "watch:check" : "tsc -w",
-    "watch:compile" : "babel src -d build --extensions \".ts\" --copy-files -w",
+    "watch:check": "tsc -w",
+    "watch:compile": "babel src -d build --extensions \".ts\" --copy-files -w",
     "build": "concurrently npm:build:*",
     "watch": "concurrently npm:watch:*"
   },
@@ -27,6 +27,7 @@
   "homepage": "https://github.com/Collaboroo/ezbackend#readme",
   "dependencies": {
     "commander": "^8.1.0",
+    "core-js": "^3.16.0",
     "cross-spawn": "^7.0.3",
     "dotenv-defaults": "^2.0.2",
     "fastify": "^3.19.2",
@@ -34,7 +35,8 @@
     "fs-extra": "^10.0.0",
     "read-pkg-up": "7.0.1",
     "sequelize": "^6.6.5",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.0.2",
+    "typescript-require": "^0.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.8",

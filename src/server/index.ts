@@ -1,8 +1,9 @@
+//TODO: Make this a non-relative import
 import { EzModel, EzRouter } from "./../model";
-import pkg, { Sequelize } from "sequelize";
-const { DataTypes } = pkg;
+import { Sequelize, DataTypes } from "sequelize";
 import fastify, { FastifyInstance } from "fastify";
 import fastifySwagger from "fastify-swagger";
+import path from "path";
 
 const logger = console;
 
@@ -16,35 +17,17 @@ export function preHandler(options: startOptions) {
 }
 
 export function handler(options: startOptions) {
-  //Imaginary end user code
-  const user = new EzModel("Users", {
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    age: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-  });
-  user.registerRoute({
-    method: "GET",
-    url: `/:id`,
-    schema: {},
-    handler(request: any, reply: any) {
-      reply.send(request.query.field);
-    },
-  });
-  const ping = new EzRouter("ping");
-  ping.registerRoute({
-    method: "GET",
-    url: "/",
-    handler(req, res) {
-      res.send("pong");
-    },
-  });
-  //Imaginary end user code
-  return { models: [user], routers: [ping] };
+  const customEzbPath = path.join(process.cwd(), "/.ezb/index.ts");
+  const customEzb = require(customEzbPath);
+  //Parse the user's code
+  const models = Object.values(customEzb).filter(
+    (obj) => Object.getPrototypeOf(obj) === EzModel.prototype
+  ) as Array<EzModel>;
+  const routers = Object.values(customEzb).filter(
+    (obj) => Object.getPrototypeOf(obj) === EzRouter.prototype
+  ) as Array<EzRouter>;
+
+  return { models: models, routers: routers };
 }
 
 function initSwagger(server: FastifyInstance) {
