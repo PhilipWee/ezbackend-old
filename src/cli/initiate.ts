@@ -1,11 +1,11 @@
 import chalk from "chalk";
-import { ProjectType } from "./project-types.js";
-import { isEzbInstalled } from "./detect.js";
-import { readPackageJson } from "./js-package-manager/index.js";
-import { JsPackageManagerFactory } from "./js-package-manager/JsPackageManagerFactory.js";
-import { paddedLog } from "./helpers.js";
-import { commandLog } from "./helpers.js";
-import defaultGenerator from './generators/DEFAULT/index.js'
+import { ProjectType } from "./project-types";
+import { isEzbInstalled } from "./detect";
+import { readPackageJson } from "./js-package-manager";
+import { JsPackageManagerFactory } from "./js-package-manager/JsPackageManagerFactory";
+import { paddedLog } from "./helpers";
+import { commandLog } from "./helpers";
+import defaultGenerator from './generators/DEFAULT'
 
 const logger = console;
 

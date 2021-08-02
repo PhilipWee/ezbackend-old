@@ -6,8 +6,8 @@ import fastify, {
   FastifyRegisterOptions,
 } from "fastify";
 import fastifySwagger from "fastify-swagger";
-import { getModelSchema } from "./sequelize-json-schema/index.js";
-import { badRequest } from "./generic-response.js";
+import { getModelSchema } from "./sequelize-json-schema";
+import { badRequest } from "./generic-response";
 import pkg, { Sequelize } from "sequelize";
 //TODO: Properly set up the compiler so we don't have disgusting shit like this
 const { DataTypes } = pkg;

@@ -1,7 +1,6 @@
 import fse from "fs-extra";
 import path from "path";
-// import { __dirname } from "../../helpers.js";
-import { JsPackageManager } from "../js-package-manager/JsPackageManager.js";
+import { JsPackageManager } from "../js-package-manager/JsPackageManager";
 
 export async function baseGenerator(packageManager: JsPackageManager) {
   const packageJson = packageManager.retrievePackageJson();

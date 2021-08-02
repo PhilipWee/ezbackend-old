@@ -1,10 +1,8 @@
 import {Command} from 'commander'
 import {sync as readPackageUpSync} from 'read-pkg-up'
-import initiate from './cli/initiate.js'
-// import { __dirname } from './helpers.js'
-import { useEnv } from './helpers.js'
-import {start} from './server/index.js'
-// import {test} from './model/index.js'
+import initiate from './cli/initiate'
+import { useEnv } from './helpers'
+import {start} from './server'
 
 useEnv("/.ezb/.env")
 

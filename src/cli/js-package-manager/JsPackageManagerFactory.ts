@@ -1,7 +1,7 @@
 import {sync as spawnSync} from 'cross-spawn'
 import {sync as findUpSync} from 'find-up'
 //TODO: Figure out why all the other packages can compile without js
-import { Yarn1Proxy } from './Yarn1Proxy.js'
+import { Yarn1Proxy } from './Yarn1Proxy'
 
 export class JsPackageManagerFactory {
     public static getPackageManager() {

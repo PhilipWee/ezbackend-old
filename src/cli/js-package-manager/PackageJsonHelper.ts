@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { PackageJson } from './PackageJson.js';
+import { PackageJson } from './PackageJson';
 
 export function readPackageJson(): PackageJson | false {
   const packageJsonPath = path.resolve('package.json');

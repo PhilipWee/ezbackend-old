@@ -1,12 +1,5 @@
 import path from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
 import dotenv from "dotenv-defaults";
-
-// const __filename = fileURLToPath(import.meta.url);
-// export const __dirname = dirname(__filename);
-
-// export const __dirname = __dirname
 
 export function useEnv(relativePath: string) {
   const envPath = path.join(process.cwd(), relativePath);

@@ -1,4 +1,4 @@
-import { JsPackageManager } from "./JsPackageManager.js";
+import { JsPackageManager } from "./JsPackageManager";
 
 export class Yarn1Proxy extends JsPackageManager {
     readonly type = 'yarn1'

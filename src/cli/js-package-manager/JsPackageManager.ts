@@ -1,7 +1,7 @@
 import { sync as spawnSync } from "cross-spawn";
-import { commandLog } from "../helpers.js";
-import { PackageJsonWithDepsAndDevDeps, PackageJson } from "./PackageJson.js";
-import { readPackageJson, writePackageJson } from "./PackageJsonHelper.js";
+import { commandLog } from "../helpers";
+import { PackageJsonWithDepsAndDevDeps, PackageJson } from "./PackageJson";
+import { readPackageJson, writePackageJson } from "./PackageJsonHelper";
 
 const logger = console
 

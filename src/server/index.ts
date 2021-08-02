@@ -1,4 +1,4 @@
-import { EzModel, EzRouter } from "./../model/index.js";
+import { EzModel, EzRouter } from "./../model";
 import pkg, { Sequelize } from "sequelize";
 const { DataTypes } = pkg;
 import fastify, { FastifyInstance } from "fastify";
