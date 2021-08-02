@@ -1,16 +1,15 @@
 import { ModelAttributes, Model, ModelCtor } from "sequelize";
 
-import fastify, {
-  RouteOptions,
-  FastifyPlugin,
-  FastifyRegisterOptions,
-} from "fastify";
-import fastifySwagger from "fastify-swagger";
+import { RouteOptions } from "fastify";
 import { getModelSchema } from "./sequelize-json-schema";
-import { badRequest } from "./generic-response";
-import pkg, { Sequelize } from "sequelize";
-//TODO: Properly set up the compiler so we don't have disgusting shit like this
-const { DataTypes } = pkg;
+import {
+  badRequest,
+  singleID,
+  notFound,
+  notFoundMsg,
+} from "./generic-response";
+import { Sequelize } from "sequelize";
+import _ from "lodash";
 
 const logger = console;
 
@@ -58,6 +57,7 @@ export class EzModel extends EzRouter {
     this.model = sequelize.define(this.modelName, this.attributes);
   }
 
+  //TODO: Change to use schemas as defined in https://www.fastify.io/docs/latest/Validation-and-Serialization/
   getJsonSchema(full: boolean) {
     if (this.model === undefined) {
       //TODO: Custom error?
@@ -82,7 +82,7 @@ export class EzModel extends EzRouter {
   }
 
   getAllAPIs() {
-    return [this.createOneAPI()];
+    return [this.createOneAPI(), this.getOneAPI(), this.updateOneAPI(),this.deleteOneAPI()];
   }
 
   createOneAPI() {
@@ -103,7 +103,104 @@ export class EzModel extends EzRouter {
           throw "Model has not been set yet";
         }
         const newObj = await that.model.create(req.body);
-        res.send(newObj)
+        res.send(newObj);
+      },
+    };
+    return routeDetails;
+  }
+
+  getOneAPI() {
+    let that = this;
+    const routeDetails: RouteOptions = {
+      method: "GET",
+      url: "/:id",
+      schema: {
+        params: singleID,
+        response: {
+          200: this.getJsonSchema(true),
+          404: notFound,
+        },
+      },
+      //TODO: Figure out a way to represent types
+      async handler(req, res) {
+        if (that.model === undefined) {
+          //TODO: Custom error?
+          throw "Model has not been set yet";
+        }
+        //@ts-ignore
+        const savedObj = await that.model.findByPk(req.params.id);
+        if (savedObj === null) {
+          res.code(404).send(notFoundMsg);
+          return;
+        }
+        res.send(savedObj);
+      },
+    };
+    return routeDetails;
+  }
+
+  //TODO: Can we make the above and below merge so that we are DRY?
+  updateOneAPI() {
+    let that = this;
+    const routeDetails: RouteOptions = {
+      method: "PUT",
+      url: "/:id",
+      schema: {
+        params: singleID,
+        body: this.getJsonSchema(false),
+        response: {
+          200: this.getJsonSchema(true),
+          404: notFound,
+        },
+      },
+      //TODO: Figure out a way to represent types
+      async handler(req, res) {
+        if (that.model === undefined) {
+          //TODO: Custom error?
+          throw "Model has not been set yet";
+        }
+        //@ts-ignore
+        const savedObj = await that.model.findByPk(req.params.id);
+        if (savedObj === null) {
+          res.code(404).send(notFoundMsg);
+          return;
+        }
+        const updatedObj = _.extend(savedObj, req.body);
+        await updatedObj.save();
+        res.send(updatedObj);
+      },
+    };
+    return routeDetails;
+  }
+
+  //TODO: Can we make the above and below merge so that we are DRY?
+  deleteOneAPI() {
+    let that = this;
+    const routeDetails: RouteOptions = {
+      method: "DELETE",
+      url: "/:id",
+      schema: {
+        params: singleID,
+        body: this.getJsonSchema(false),
+        response: {
+          200: this.getJsonSchema(true),
+          404: notFound,
+        },
+      },
+      //TODO: Figure out a way to represent types
+      async handler(req, res) {
+        if (that.model === undefined) {
+          //TODO: Custom error?
+          throw "Model has not been set yet";
+        }
+        //@ts-ignore
+        const savedObj = await that.model.findByPk(req.params.id);
+        if (savedObj === null) {
+          res.code(404).send(notFoundMsg);
+          return;
+        }
+        await savedObj.destroy()
+        res.send(savedObj);
       },
     };
     return routeDetails;

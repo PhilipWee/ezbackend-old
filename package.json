@@ -1,6 +1,6 @@
 {
   "name": "ezbackend",
-  "version": "1.0.11",
+  "version": "1.0.15",
   "description": "",
   "main": "build/index.js",
   "scripts": {
@@ -33,6 +33,8 @@
     "fastify": "^3.19.2",
     "fastify-swagger": "^4.8.3",
     "fs-extra": "^10.0.0",
+    "lodash": "^4.17.21",
+    "open": "^8.2.1",
     "read-pkg-up": "7.0.1",
     "sequelize": "^6.6.5",
     "sqlite3": "^5.0.2",
@@ -47,6 +49,7 @@
     "@types/cross-spawn": "^6.0.2",
     "@types/dotenv-defaults": "^2.0.1",
     "@types/fs-extra": "^9.0.12",
+    "@types/lodash": "^4.14.171",
     "@types/node": "^16.4.8",
     "concurrently": "^6.2.0"
   },

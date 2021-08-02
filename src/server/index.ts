@@ -4,6 +4,7 @@ import { Sequelize, DataTypes } from "sequelize";
 import fastify, { FastifyInstance } from "fastify";
 import fastifySwagger from "fastify-swagger";
 import path from "path";
+import open from "open";
 
 const logger = console;
 
@@ -78,15 +79,5 @@ export async function postHandler(
   //TODO: Reduce swagger logging output
   server.swagger();
   logger.log(`EzBackend Listening on ${port}`);
+  open(`http://localhost:${port}/docs`)
 }
-
-// export async function test() {
-//   const server = fastify();
-
-//   ezmodel.init(sequelize);
-//   server.register(ezmodel.registerFunction(), { prefix: ezmodel.routePrefix });
-//   sequelize.sync();
-//   const port = 8000;
-//   await server.listen(port);
-//   server.swagger();
-// }

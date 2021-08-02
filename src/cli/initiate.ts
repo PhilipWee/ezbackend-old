@@ -7,6 +7,8 @@ import { paddedLog } from "./helpers";
 import { commandLog } from "./helpers";
 import defaultGenerator from './generators/DEFAULT'
 
+
+//TODO: Seperate the cli from the server to reduce load time
 const logger = console;
 
 type initiateOptions = {

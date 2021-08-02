@@ -1,4 +1,4 @@
-import { EzModel } from "ezbackend";
+import { EzModel, EzRouter } from "ezbackend";
 import { DataTypes } from "sequelize";
 
 export const user = new EzModel("users", {
@@ -11,3 +11,21 @@ export const user = new EzModel("users", {
     allowNull: false,
   },
 });
+
+// export const customEndpoint = new EzRouter("custom")
+
+// customEndpoint.registerRoute({
+//   method: 'GET',
+//   url: '/',
+//   schema: {
+//     body: {
+
+//     },
+//     response: {
+//       200: {}
+//     }
+//   },
+//   handler(req,res) {
+//     res.send('hi')
+//   }
+// })
