@@ -1,5 +1,5 @@
-import EzModel from "ezbackend";
-import {DataTypes, Sequelize } from "sequelize";
+import { EzModel } from "ezbackend";
+import { DataTypes } from "sequelize";
 
 export const user = new EzModel("users", {
   name: {

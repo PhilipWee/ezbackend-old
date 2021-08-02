@@ -17,7 +17,8 @@
     "outDir": "./build",                              /* Redirect output structure to the directory. */
     "rootDir": "./src",  
     "moduleResolution": "node",
-    "noEmit": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
