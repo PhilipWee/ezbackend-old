@@ -26,8 +26,7 @@ export abstract class JsPackageManager {
 
     //TODO: See if there is a better way than ts-node
     //TODO: Programmatically get the file path instead
-    const filePath = path.join(process.cwd(),'node_modules/ezbackend/build/index.js')
-    const ezbCmd = `ts-node "${filePath}" start`
+    const ezbCmd = `npx ts-node node_modules/ezbackend start`
     this.addScripts({
       ezb: ezbCmd
     })

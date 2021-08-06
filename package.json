@@ -1,6 +1,6 @@
 {
   "name": "ezbackend",
-  "version": "1.0.15",
+  "version": "1.0.19",
   "description": "",
   "main": "build/index.js",
   "scripts": {
@@ -38,6 +38,7 @@
     "read-pkg-up": "7.0.1",
     "sequelize": "^6.6.5",
     "sqlite3": "^5.0.2",
+    "ts-node": "^10.1.0",
     "typescript-require": "^0.3.0"
   },
   "devDependencies": {

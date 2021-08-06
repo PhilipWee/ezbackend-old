@@ -10,6 +10,8 @@ const logger = console;
 
 type startOptions = {};
 
+//TODO: Add ts-node as dependency
+//TODO: Figure out how to watch the .ezb folder and recompile on update
 export function preHandler(options: startOptions) {
   const server = fastify({ logger: true });
   initSwagger(server);
