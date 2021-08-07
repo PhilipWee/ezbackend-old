@@ -1,5 +1,5 @@
 import { ModelAttributes, Model, ModelCtor } from "sequelize";
-
+import avvio, { Avvio, context } from "avvio";
 import { RouteOptions, FastifyInstance } from "fastify";
 import { getModelSchema } from "./sequelize-json-schema";
 import {
@@ -10,8 +10,27 @@ import {
 } from "./generic-response";
 import { Sequelize } from "sequelize";
 import _ from "lodash"; //TODO: For all lodash make sure to import only what is needed
+import { useConfig } from "../helpers";
 
 const logger = console;
+
+type IEzbPlugin = (
+  ezb: context<EzBackend>,
+  options: any,
+  cb: (err?: Error) => void
+) => void;
+
+export type ezbConfig = {
+  preInit: Array<IEzbPlugin>;
+  init: IEzbPlugin | null;
+  postInit: Array<IEzbPlugin>;
+  preHandler: Array<IEzbPlugin>;
+  handler: IEzbPlugin | null;
+  postHandler: Array<IEzbPlugin>;
+  preRun: Array<IEzbPlugin>;
+  run: IEzbPlugin | null;
+  postRun: Array<IEzbPlugin>;
+};
 
 //TODO: Make sequelize and server never null, just overwritable
 export class EzBackend {
@@ -19,18 +38,58 @@ export class EzBackend {
   server: FastifyInstance | null;
 
   private static instance: EzBackend;
+  private static pluginManager: Avvio<EzBackend>;
+
+  public static start(): void {
+    const plugins: ezbConfig = useConfig("/.ezb/ezb.config.ts");
+    if (!plugins.init || !plugins.handler || !plugins.run) {
+      throw "The init, handler and run plugins must be defined!";
+    }
+    //TODO: Figure out this logic and reorganise to be neater
+    const ezb = EzBackend.plugins();
+    plugins.preInit.forEach((plugin) => {
+      ezb.use(plugin);
+    });
+    ezb.use(plugins.init);
+    plugins.postInit.forEach((plugin) => {
+      ezb.use(plugin);
+    });
+    plugins.preHandler.forEach((plugin) => {
+      ezb.use(plugin);
+    });
+    ezb.use(plugins.handler);
+    plugins.postHandler.forEach((plugin) => {
+      ezb.use(plugin);
+    });
+    plugins.preRun.forEach((plugin) => {
+      ezb.use(plugin);
+    });
+    ezb.use(plugins.run);
+    plugins.postRun.forEach((plugin) => {
+      ezb.use(plugin);
+    });
+  }
 
   private constructor() {
     this.sequelize = null;
     this.server = null;
   }
 
-  public static app(): EzBackend {
-    if (!EzBackend.instance) {
+  public static init(): void {
+    if (!EzBackend.instance || !EzBackend.pluginManager) {
       EzBackend.instance = new EzBackend();
+      EzBackend.pluginManager = avvio(EzBackend.instance);
     }
+  }
 
+  public static app(): EzBackend {
+    EzBackend.init();
     return EzBackend.instance;
+  }
+
+  public static plugins(): Avvio<EzBackend> {
+    EzBackend.init();
+    return EzBackend.pluginManager;
   }
 }
 
@@ -47,7 +106,6 @@ export class EzRouter {
   //TODO: Figure out why on earth the types are no registering on the frontend for this
   public registerRoute(newRoute: RouteOptions) {
     const server = EzBackend.app().server;
-    console.log("registering route");
     if (server) {
       server.register(this.registerFunction(newRoute), {
         prefix: this.routePrefix,
@@ -72,8 +130,8 @@ export class EzModel extends EzRouter {
   modelName: string;
   attributes: ModelAttributes<Model<any, any>>;
   apiFactories: {
-    [key:string] : (model:EzModel) => RouteOptions
-  }
+    [key: string]: (model: EzModel) => RouteOptions;
+  };
 
   //TODO: Validation to ensure modelName will not mess up the route prefix
   //Perhaps can use the inflection pluralisation library
@@ -83,11 +141,11 @@ export class EzModel extends EzRouter {
     this.attributes = attributes;
     const sequelize = EzBackend.app().sequelize;
     this.apiFactories = {
-      'createOne': EzModel.createOneAPI,
-      'getOne':EzModel.getOneAPI,
-      'updateOne':EzModel.updateOneAPI,
-      'deleteOne':EzModel.deleteOneAPI,
-    }
+      createOne: EzModel.createOneAPI,
+      getOne: EzModel.getOneAPI,
+      updateOne: EzModel.updateOneAPI,
+      deleteOne: EzModel.deleteOneAPI,
+    };
     if (sequelize) {
       this.init(sequelize);
     } else {
@@ -118,13 +176,12 @@ export class EzModel extends EzRouter {
 
   init(sequelize: Sequelize) {
     this.setModel(sequelize);
-    Object.entries(this.apiFactories).forEach(([key,apiFactory]) => {
+    Object.entries(this.apiFactories).forEach(([key, apiFactory]) => {
       this.registerRoute(apiFactory(this));
     });
   }
 
-
-  public static createOneAPI(ezModel:EzModel) {
+  public static createOneAPI(ezModel: EzModel) {
     const routeDetails: RouteOptions = {
       method: "POST",
       url: "/",
@@ -147,7 +204,7 @@ export class EzModel extends EzRouter {
     return routeDetails;
   }
 
-  public static getOneAPI(ezModel:EzModel) {
+  public static getOneAPI(ezModel: EzModel) {
     const routeDetails: RouteOptions = {
       method: "GET",
       url: "/:id",

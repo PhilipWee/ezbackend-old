@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { EzModel, EzRouter } from './model';
-export {EzModel, EzRouter}
+import { EzModel, EzRouter, EzBackend } from './model';
+export {EzModel, EzRouter, EzBackend}
 
 import './command-handler'
