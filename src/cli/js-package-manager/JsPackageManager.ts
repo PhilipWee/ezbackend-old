@@ -1,8 +1,8 @@
 import { sync as spawnSync } from "cross-spawn";
 import { commandLog } from "../helpers";
-import path from 'path'
 import { PackageJsonWithDepsAndDevDeps, PackageJson } from "./PackageJson";
 import { readPackageJson, writePackageJson } from "./PackageJsonHelper";
+
 
 const logger = console
 

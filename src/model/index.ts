@@ -1,6 +1,6 @@
 import { ModelAttributes, Model, ModelCtor } from "sequelize";
 
-import { RouteOptions } from "fastify";
+import { RouteOptions, FastifyInstance } from "fastify";
 import { getModelSchema } from "./sequelize-json-schema";
 import {
   badRequest,
@@ -9,9 +9,30 @@ import {
   notFoundMsg,
 } from "./generic-response";
 import { Sequelize } from "sequelize";
-import _ from "lodash";
+import _ from "lodash"; //TODO: For all lodash make sure to import only what is needed
 
 const logger = console;
+
+//TODO: Make sequelize and server never null, just overwritable
+export class EzBackend {
+  sequelize: Sequelize | null;
+  server: FastifyInstance | null;
+
+  private static instance: EzBackend;
+
+  private constructor() {
+    this.sequelize = null;
+    this.server = null;
+  }
+
+  public static app(): EzBackend {
+    if (!EzBackend.instance) {
+      EzBackend.instance = new EzBackend();
+    }
+
+    return EzBackend.instance;
+  }
+}
 
 export class EzRouter {
   routePrefix: string;
@@ -25,16 +46,22 @@ export class EzRouter {
 
   //TODO: Figure out why on earth the types are no registering on the frontend for this
   public registerRoute(newRoute: RouteOptions) {
-    this.routes.push(newRoute);
+    const server = EzBackend.app().server;
+    console.log("registering route");
+    if (server) {
+      server.register(this.registerFunction(newRoute), {
+        prefix: this.routePrefix,
+      });
+    } else {
+      //TODO: Custom error?
+      throw "Fastify instance does not exist on app! Have you run preHandler yet?";
+    }
   }
 
   //TODO: Figure out how to add types to this
-  public registerFunction() {
-    let that = this;
+  public registerFunction(newRoute: RouteOptions) {
     return function (server: any, opts: any, done: any) {
-      that.routes.forEach((route) => {
-        server.route(route);
-      });
+      server.route(newRoute);
       done();
     };
   }
@@ -44,6 +71,9 @@ export class EzModel extends EzRouter {
   model: ModelCtor<Model<any, any>> | undefined;
   modelName: string;
   attributes: ModelAttributes<Model<any, any>>;
+  apiFactories: {
+    [key:string] : (model:EzModel) => RouteOptions
+  }
 
   //TODO: Validation to ensure modelName will not mess up the route prefix
   //Perhaps can use the inflection pluralisation library
@@ -51,6 +81,19 @@ export class EzModel extends EzRouter {
     super(`/${modelName}`); //Note: No trailing slash is intentional
     this.modelName = modelName;
     this.attributes = attributes;
+    const sequelize = EzBackend.app().sequelize;
+    this.apiFactories = {
+      'createOne': EzModel.createOneAPI,
+      'getOne':EzModel.getOneAPI,
+      'updateOne':EzModel.updateOneAPI,
+      'deleteOne':EzModel.deleteOneAPI,
+    }
+    if (sequelize) {
+      this.init(sequelize);
+    } else {
+      //TODO: Custom error?
+      throw "Fastify instance does not exist on app! Have you run preHandler yet?";
+    }
   }
 
   setModel(sequelize: Sequelize) {
@@ -75,60 +118,54 @@ export class EzModel extends EzRouter {
 
   init(sequelize: Sequelize) {
     this.setModel(sequelize);
-    const apis = this.getAllAPIs();
-    apis.forEach((api) => {
-      this.registerRoute(api);
+    Object.entries(this.apiFactories).forEach(([key,apiFactory]) => {
+      this.registerRoute(apiFactory(this));
     });
   }
 
-  getAllAPIs() {
-    return [this.createOneAPI(), this.getOneAPI(), this.updateOneAPI(),this.deleteOneAPI()];
-  }
 
-  createOneAPI() {
-    let that = this;
+  public static createOneAPI(ezModel:EzModel) {
     const routeDetails: RouteOptions = {
       method: "POST",
       url: "/",
       schema: {
-        body: this.getJsonSchema(false),
+        body: ezModel.getJsonSchema(false),
         response: {
-          200: this.getJsonSchema(true),
+          200: ezModel.getJsonSchema(true),
           400: badRequest,
         },
       },
       async handler(req, res) {
-        if (that.model === undefined) {
+        if (ezModel.model === undefined) {
           //TODO: Custom error?
           throw "Model has not been set yet";
         }
-        const newObj = await that.model.create(req.body);
+        const newObj = await ezModel.model.create(req.body);
         res.send(newObj);
       },
     };
     return routeDetails;
   }
 
-  getOneAPI() {
-    let that = this;
+  public static getOneAPI(ezModel:EzModel) {
     const routeDetails: RouteOptions = {
       method: "GET",
       url: "/:id",
       schema: {
         params: singleID,
         response: {
-          200: this.getJsonSchema(true),
+          200: ezModel.getJsonSchema(true),
           404: notFound,
         },
       },
       //TODO: Figure out a way to represent types
       async handler(req, res) {
-        if (that.model === undefined) {
+        if (ezModel.model === undefined) {
           //TODO: Custom error?
           throw "Model has not been set yet";
         }
         //@ts-ignore
-        const savedObj = await that.model.findByPk(req.params.id);
+        const savedObj = await ezModel.model.findByPk(req.params.id);
         if (savedObj === null) {
           res.code(404).send(notFoundMsg);
           return;
@@ -140,27 +177,26 @@ export class EzModel extends EzRouter {
   }
 
   //TODO: Can we make the above and below merge so that we are DRY?
-  updateOneAPI() {
-    let that = this;
+  public static updateOneAPI(ezModel: EzModel) {
     const routeDetails: RouteOptions = {
       method: "PUT",
       url: "/:id",
       schema: {
         params: singleID,
-        body: this.getJsonSchema(false),
+        body: ezModel.getJsonSchema(false),
         response: {
-          200: this.getJsonSchema(true),
+          200: ezModel.getJsonSchema(true),
           404: notFound,
         },
       },
       //TODO: Figure out a way to represent types
       async handler(req, res) {
-        if (that.model === undefined) {
+        if (ezModel.model === undefined) {
           //TODO: Custom error?
           throw "Model has not been set yet";
         }
         //@ts-ignore
-        const savedObj = await that.model.findByPk(req.params.id);
+        const savedObj = await ezModel.model.findByPk(req.params.id);
         if (savedObj === null) {
           res.code(404).send(notFoundMsg);
           return;
@@ -174,32 +210,31 @@ export class EzModel extends EzRouter {
   }
 
   //TODO: Can we make the above and below merge so that we are DRY?
-  deleteOneAPI() {
-    let that = this;
+  public static deleteOneAPI(ezModel: EzModel) {
     const routeDetails: RouteOptions = {
       method: "DELETE",
       url: "/:id",
       schema: {
         params: singleID,
-        body: this.getJsonSchema(false),
+        body: ezModel.getJsonSchema(false),
         response: {
-          200: this.getJsonSchema(true),
+          200: ezModel.getJsonSchema(true),
           404: notFound,
         },
       },
       //TODO: Figure out a way to represent types
       async handler(req, res) {
-        if (that.model === undefined) {
+        if (ezModel.model === undefined) {
           //TODO: Custom error?
           throw "Model has not been set yet";
         }
         //@ts-ignore
-        const savedObj = await that.model.findByPk(req.params.id);
+        const savedObj = await ezModel.model.findByPk(req.params.id);
         if (savedObj === null) {
           res.code(404).send(notFoundMsg);
           return;
         }
-        await savedObj.destroy()
+        await savedObj.destroy();
         res.send(savedObj);
       },
     };

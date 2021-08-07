@@ -1,7 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Node 14",
-
   "compilerOptions": {
     "lib": [
       "ES2015",
@@ -22,7 +21,11 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "src",
+    "paths" : {
+      "@model/*": ["./model"]
+    }
   },
   "include": ["src"],
   "exclude": ["src/cli/frameworks/**/*"]
