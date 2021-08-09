@@ -154,7 +154,8 @@ export function getAttributeSchema(att) {
 
     // This is the `key` for DOUBLE datatypes... ¯\_(ツ)_/¯
     case "DOUBLE PRECISION": {
-      schema = { ...NUMBER, format: "double" };
+      //TODO: Need to make sure float is the right size
+      schema = { ...NUMBER };
       break;
     }
     case "ENUM": {
@@ -162,7 +163,8 @@ export function getAttributeSchema(att) {
       break;
     }
     case "FLOAT": {
-      schema = { ...NUMBER, format: "float" };
+      //TODO: Need to make sure float is the right size
+      schema = { ...NUMBER };
       break;
     }
     // GEOGRAPHY - needs definition

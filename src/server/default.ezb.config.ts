@@ -50,7 +50,12 @@ const config:ezbConfig = {
         ezb.sequelize.sync();
 
         const port = process.env.PORT ? Number(process.env.PORT) : 8888;
-        await ezb.server.listen(port);
+        await ezb.server.listen(port, function(err,address) {
+          if (err) {
+            console.log(err)
+            process.exit(1)
+          }
+        });
         //TODO: Reduce swagger logging output
         ezb.server.swagger();
         open(`http://localhost:${port}/docs`);

@@ -61,13 +61,16 @@ export class EzBackend {
     plugins.postHandler.forEach((plugin) => {
       ezb.use(plugin);
     });
+
     plugins.preRun.forEach((plugin) => {
       ezb.use(plugin);
     });
+
     ezb.use(plugins.run);
     plugins.postRun.forEach((plugin) => {
       ezb.use(plugin);
     });
+
   }
 
   private constructor() {
@@ -148,17 +151,23 @@ export class EzModel extends EzRouter {
     };
     if (sequelize) {
       this.init(sequelize);
+
     } else {
       //TODO: Custom error?
-      throw "Fastify instance does not exist on app! Have you run preHandler yet?";
+      throw "sequelize instance does not exist on app! Is init configured correctly?";
     }
   }
 
-  setModel(sequelize: Sequelize) {
+  init(sequelize: Sequelize) {
     this.model = sequelize.define(this.modelName, this.attributes);
+    Object.entries(this.apiFactories).forEach(([key, apiFactory]) => {
+      this.registerRoute(apiFactory(this));
+    });
   }
 
+
   //TODO: Change to use schemas as defined in https://www.fastify.io/docs/latest/Validation-and-Serialization/
+  //NOTE: The above functionality has been broken for years (The library fastify uses is spoilt)
   getJsonSchema(full: boolean) {
     if (this.model === undefined) {
       //TODO: Custom error?
@@ -166,7 +175,8 @@ export class EzModel extends EzRouter {
     }
 
     if (full) {
-      return getModelSchema(this.model);
+      const schema = getModelSchema(this.model)
+      return schema;
     } else {
       return getModelSchema(this.model, {
         exclude: ["id", "createdAt", "updatedAt"],
@@ -174,12 +184,7 @@ export class EzModel extends EzRouter {
     }
   }
 
-  init(sequelize: Sequelize) {
-    this.setModel(sequelize);
-    Object.entries(this.apiFactories).forEach(([key, apiFactory]) => {
-      this.registerRoute(apiFactory(this));
-    });
-  }
+  
 
   public static createOneAPI(ezModel: EzModel) {
     const routeDetails: RouteOptions = {
