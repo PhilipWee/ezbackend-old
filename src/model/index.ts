@@ -2,15 +2,11 @@ import { ModelAttributes, Model, ModelCtor } from "sequelize";
 import avvio, { Avvio, context } from "avvio";
 import { RouteOptions, FastifyInstance } from "fastify";
 import { getModelSchema } from "./sequelize-json-schema";
-import {
-  badRequest,
-  singleID,
-  notFound,
-  notFoundMsg,
-} from "./generic-response";
+import * as response from "./generic-response";
 import { Sequelize } from "sequelize";
 import _ from "lodash"; //TODO: For all lodash make sure to import only what is needed
 import { useConfig } from "../helpers";
+
 
 const logger = console;
 
@@ -159,7 +155,14 @@ export class EzModel extends EzRouter {
   }
 
   init(sequelize: Sequelize) {
+    this.setModel(sequelize)
+  }
+
+  setModel(sequelize:Sequelize) {
     this.model = sequelize.define(this.modelName, this.attributes);
+  }
+
+  registerRoutes() {
     Object.entries(this.apiFactories).forEach(([key, apiFactory]) => {
       this.registerRoute(apiFactory(this));
     });
@@ -194,7 +197,7 @@ export class EzModel extends EzRouter {
         body: ezModel.getJsonSchema(false),
         response: {
           200: ezModel.getJsonSchema(true),
-          400: badRequest,
+          400: response.badRequest,
         },
       },
       async handler(req, res) {
@@ -214,10 +217,10 @@ export class EzModel extends EzRouter {
       method: "GET",
       url: "/:id",
       schema: {
-        params: singleID,
+        params: response.singleID,
         response: {
           200: ezModel.getJsonSchema(true),
-          404: notFound,
+          404: response.notFound,
         },
       },
       //TODO: Figure out a way to represent types
@@ -229,7 +232,7 @@ export class EzModel extends EzRouter {
         //@ts-ignore
         const savedObj = await ezModel.model.findByPk(req.params.id);
         if (savedObj === null) {
-          res.code(404).send(notFoundMsg);
+          res.code(404).send(response.notFoundMsg);
           return;
         }
         res.send(savedObj);
@@ -244,11 +247,11 @@ export class EzModel extends EzRouter {
       method: "PUT",
       url: "/:id",
       schema: {
-        params: singleID,
+        params: response.singleID,
         body: ezModel.getJsonSchema(false),
         response: {
           200: ezModel.getJsonSchema(true),
-          404: notFound,
+          404: response.notFound,
         },
       },
       //TODO: Figure out a way to represent types
@@ -260,7 +263,7 @@ export class EzModel extends EzRouter {
         //@ts-ignore
         const savedObj = await ezModel.model.findByPk(req.params.id);
         if (savedObj === null) {
-          res.code(404).send(notFoundMsg);
+          res.code(404).send(response.notFoundMsg);
           return;
         }
         const updatedObj = _.extend(savedObj, req.body);
@@ -277,11 +280,11 @@ export class EzModel extends EzRouter {
       method: "DELETE",
       url: "/:id",
       schema: {
-        params: singleID,
+        params: response.singleID,
         body: ezModel.getJsonSchema(false),
         response: {
           200: ezModel.getJsonSchema(true),
-          404: notFound,
+          404: response.notFound,
         },
       },
       //TODO: Figure out a way to represent types
@@ -293,7 +296,7 @@ export class EzModel extends EzRouter {
         //@ts-ignore
         const savedObj = await ezModel.model.findByPk(req.params.id);
         if (savedObj === null) {
-          res.code(404).send(notFoundMsg);
+          res.code(404).send(response.notFoundMsg);
           return;
         }
         await savedObj.destroy();
@@ -303,3 +306,5 @@ export class EzModel extends EzRouter {
     return routeDetails;
   }
 }
+
+export * as response from "./generic-response";

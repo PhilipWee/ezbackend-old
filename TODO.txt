@@ -8,4 +8,7 @@ There may be conflict with sharing node modules
 Rollup for bundling
 
 To fix:
+Reduce swagger logging output
+Fix the weird fasitfy swagger displays
 unkonwn type string null etc
+Remove ajv?
