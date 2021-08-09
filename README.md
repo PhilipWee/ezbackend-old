@@ -1,28 +1,75 @@
 # EzBackend
 
-Create a ~~fully extensible~~ backend in **two lines of code**
+Create a fully extensible backend in **two lines of code**
 
-> ⚠️ Package still in development
+> ⚠️ Package still in development, currently working on the fully extensible part
 
-> 💡 Currently working on the fully extensible part
+## Installation
+
+In a new project folder, create a new node package  (Or use an existing one)
+
+```
+npm init -y
+```
+
+Instantiate ezbackend
+
+```
+npx ezbackend init
+```
 
 ## Usage
 
-Create a new node package (Or use an existing one)
 ```
-mkdir ezbackend-testing
-cd ezbackend-testing
-npm init -y
-```
-Instantiate Ezbackend
-```
-npx ezbackend init
 npm run ezb
+```
+
+## Getting Started
+
+A default schema is generated for you. You can edit this schema or make your own. 
+Running this will automatically create POST, GET, PUT, and DELETE endpoints that you can test on [http://localhost:8888/docs/static/index.html](http://localhost:8888/docs/static/index.html)
+
+```tsx
+import { EzModel, EzRouter } from "ezbackend";
+import { DataTypes } from "sequelize";
+
+export const user = new EzModel("users", {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  age: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+});
+```
+
+You can also make your own custom endpoints
+
+```tsx
+export const customEndpoint = new EzRouter("custom")
+
+customEndpoint.registerRoute({
+  method: 'GET',
+  url: '/',
+  schema: {
+    body: {
+
+    },
+    response: {
+      200: {}
+    }
+  },
+  handler(req,res) {
+    res.send('hi')
+  }
+})
 ```
 
 ## What it does
 
-1. Look at schemas inside the generated .ezb folder
+1. Looks at schemas inside the generated .ezb folder
 2. Automatically generate generic endpoints for each schema
 3. Automatically create the tables in SQLite3 in-memory DB
 4. Automatically create the documentation for each endpoint
@@ -31,11 +78,10 @@ npm run ezb
 ![documentation](/swagger-image.png)
 
 ## How it works
+
 1. It uses [sequelize](https://sequelize.org/master/) to connect to any sequelize supported DB (Postgres, MySQL, SQLite, etc)
 2. It uses [fastify](https://www.fastify.io/) to create the endpoints
 3. It uses [fastify swagger](https://github.com/fastify/fastify-swagger) to generate the documentation
-
-
 
 ## Planned Features
 
@@ -49,11 +95,10 @@ npm run ezb
 8. One line client side code
 9. Benchmarks (Firebase, AWS Amplify, etc)
 
-# 📞Contact Us📞
+## Contact Us
+
 > If you are keen on contributing/using EzBackend contact us at we.are.collaboroo@gmail.com
-
-> Or submit a pull request to the [main repo](https://github.com/Collaboroo/ezbackend)
-
+Or submit a pull request to the main repo
 
 ## Work to be done before initial release
 
