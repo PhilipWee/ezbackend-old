@@ -281,7 +281,6 @@ export class EzModel extends EzRouter {
       url: "/:id",
       schema: {
         params: response.singleID,
-        body: ezModel.getJsonSchema(false),
         response: {
           200: ezModel.getJsonSchema(true),
           404: response.notFound,
